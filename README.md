@@ -1,6 +1,6 @@
 # Spring-Framework-Notes
 
-##What is Flushing in JPA in the context of JPA (Java Persistence API) and Hibernate?
+## What is Flushing in JPA in the context of JPA (Java Persistence API) and Hibernate?
 
 In the context of **JPA (Java Persistence API)** and **Hibernate**, **flushing** refers to the process of synchronizing the **in-memory state** of the persistence context (also known as the first-level cache) with the **database**. Specifically, it involves sending the changes made to managed entities (in memory) to the database for **execution** (such as `INSERT`, `UPDATE`, and `DELETE` statements). 
 
