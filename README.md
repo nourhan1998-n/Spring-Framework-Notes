@@ -1,6 +1,5 @@
-# Spring-Framework-Notes
+# Spring-Framework-Notes "Data Access"
 
-# Transaction Management and JPA in Spring Framework
 
 ## 1. What are the transaction management mechanisms in Spring framework data access?
 
