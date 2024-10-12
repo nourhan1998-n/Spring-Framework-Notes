@@ -1,6 +1,159 @@
 # Spring-Framework-Notes
 
-## What is Flushing in JPA in the context of JPA (Java Persistence API) and Hibernate?
+# Transaction Management and JPA in Spring Framework
+
+## 1. What are the transaction management mechanisms in Spring framework data access?
+
+Spring provides a wide range of transaction management mechanisms:
+
+### 1.1 JDBC Transactions
+- **DataSourceTransactionManager**: Manages transactions directly at the JDBC level, typically used with `JdbcTemplate` or plain JDBC.
+
+### 1.2 Hibernate Transactions
+- **HibernateTransactionManager**: Integrates Hibernate transactions with Spring, working directly with Hibernate’s `SessionFactory`.
+
+### 1.3 JPA Transactions
+- **JpaTransactionManager**: Used for managing transactions in a JPA context, integrating Spring with JPA’s `EntityManager`.
+
+### 1.4 Spring’s LocalSessionFactoryBean
+- Configures Hibernate's `SessionFactory` in Spring applications. Transactions were typically managed using the `@Transactional` annotation.
+
+### 1.5 Global JTA Transactions
+- **JtaTransactionManager**: Enables global (distributed) transactions across multiple resources (databases, JMS, etc.) using Java Transaction API (JTA). Typically used in enterprise applications that need multi-resource transactions.
+
+### 1.6 Reactive Transactions
+- **ReactiveTransactionManager**: Provides transaction management in a non-blocking, reactive programming environment, mainly used with R2DBC (Reactive Relational Database Connectivity).
+
+### 1.7 Chained Transaction Management
+- **ChainedTransactionManager**: Coordinates transactions across multiple resources (e.g., JDBC, JMS) by chaining multiple transaction managers.
+
+### 1.8 JMS Transactions
+- **JmsTransactionManager**: Handles transactions for Java Message Service (JMS), ensuring messaging operations are part of a transactional workflow.
+
+### 1.9 MongoDB Transactions
+- **MongoTransactionManager**: Manages transactions in MongoDB, primarily for multi-document transactions.
+
+### Declarative vs. Programmatic Transaction Management
+- **Declarative Transaction Management (@Transactional)**: Automatically defines transaction boundaries without manual handling of transaction logic.
+- **Programmatic Transaction Management**: Offers explicit control over transactions using `TransactionTemplate` or directly managing transactions through `PlatformTransactionManager`.
+
+---
+
+## 2. How @Transactional works in Spring Framework?
+
+### Summary of Flow
+- A method is called on a transactional bean.
+- The proxy checks for an existing transaction.
+- A new transaction is started (if necessary).
+- The method is executed.
+- If no exception occurs, the transaction is committed; if an exception occurs, it is rolled back.
+- Resources are cleaned up.
+
+### 2.1 Proxy Creation
+When you annotate a class or method with `@Transactional`, Spring creates a proxy around your bean. There are two types of proxies:
+- **JDK Dynamic Proxies**: Created if the class implements one or more interfaces.
+- **CGLIB Proxies**: Created if the class does not implement interfaces or is configured explicitly.
+
+### 2.2 Interception of Method Calls
+- Transaction context is checked when a method annotated with `@Transactional` is called.
+- Based on propagation settings, the proxy either joins an existing transaction or creates a new one.
+
+### 2.3 Starting a Transaction
+- The proxy interacts with the transaction manager to start a transaction, acquire resources, and manage the lifecycle of the transaction.
+
+### 2.4 Method Execution
+- The proxy executes the actual method logic within the transactional context.
+
+### 2.5 Exception Handling and Rollback
+- If an exception occurs, the transaction is rolled back based on rollback rules (typically for unchecked exceptions).
+
+### 2.6 Committing the Transaction
+- If the method completes successfully, the transaction is committed.
+
+---
+
+## 3. What does @Transactional manage in Spring?
+
+`@Transactional` offers fine-grained control over transaction behavior, including:
+
+### 3.1 Transaction Propagation
+- **REQUIRED**: Joins an existing transaction or creates a new one.
+- **REQUIRES_NEW**: Suspends the current transaction and starts a new one.
+- **SUPPORTS, MANDATORY, NEVER, NOT_SUPPORTED, NESTED**: Other propagation settings to define transaction behavior.
+
+### 3.2 Transaction Isolation Levels
+Defines visibility of changes across transactions:
+- **READ_UNCOMMITTED**, **READ_COMMITTED**, **REPEATABLE_READ**, **SERIALIZABLE**.
+
+### 3.3 Transaction Timeout
+Sets the maximum duration for a transaction:
+```java
+@Transactional(timeout = 30)
+```
+
+### 3.4 Read-Only Transactions
+Optimizes performance for read-only transactions:
+```java
+@Transactional(readOnly = true)
+```
+
+### 3.5 Rollback Rules
+Specifies which exceptions trigger a rollback:
+```java
+@Transactional(rollbackFor = Exception.class)
+```
+
+### 3.6 Transaction Synchronization
+Synchronizes transactional resources and ensures proper commit or rollback.
+
+### 3.7 Nested Transactions
+Allows creating savepoints within transactions using `NESTED` propagation.
+
+### 3.8 Custom Transaction Managers
+Specifies different transaction managers for different resources.
+
+---
+
+## 4. Explain Proxy creation with @Transactional.
+
+When you annotate a class or method with `@Transactional`:
+
+1. **Bean Registration**: Spring detects the `@Transactional` annotation.
+2. **Proxy Generation**: Spring creates a proxy (either JDK Dynamic Proxy or CGLIB Proxy).
+3. **Method Interception**: The proxy intercepts calls to the bean's methods and manages transaction behavior.
+
+### Intercepting Method Calls
+When a method on the proxy is invoked:
+Advice Execution: The proxy executes any associated advice (in this case, transaction management logic) before and/or after the actual method invocation. This is where it checks transaction settings like propagation and isolation.
+
+### Transaction Management Flow
+1. Incoming method call is intercepted.
+2. Proxy checks for an existing transaction.
+3. Based on propagation, either joins or starts a new transaction.
+4. Executes the target method.
+5. Handles exceptions and performs rollback if necessary.
+6. Cleans up resources after method execution.
+
+---
+
+## 5. Explain @PersistenceContext in Spring Data Access.
+
+`@PersistenceContext` is used to inject an `EntityManager` in the data access layer when working with JPA.
+
+### 5.1 Dependency Injection
+Injects `EntityManager` automatically into your repositories or service classes.
+
+### 5.2 Transaction Management
+- The `EntityManager` is bound to the current transaction.
+- Automatic flushing of changes before transaction commits.
+
+### 5.3 Attributes of @PersistenceContext
+- **unitName**: Specifies the persistence unit if multiple are defined.
+- **type**: Can be `TRANSACTION` or `EXTENDED` for managing different scopes of the `EntityManager`.
+
+---
+
+## 6. What is Flushing in JPA in the context of JPA and Hibernate?
 
 In the context of **JPA (Java Persistence API)** and **Hibernate**, **flushing** refers to the process of synchronizing the **in-memory state** of the persistence context (also known as the first-level cache) with the **database**. Specifically, it involves sending the changes made to managed entities (in memory) to the database for **execution** (such as `INSERT`, `UPDATE`, and `DELETE` statements). 
 
