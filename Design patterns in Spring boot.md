@@ -151,3 +151,21 @@ Spring Boot is designed with many design patterns to make development easier, mo
 - Chain of Responsibility
 
 Each pattern has its own specific use case and helps in building robust and scalable applications.
+
+ 
+
+| **Design Pattern**      | **Description**                                                                 | **Usage in Spring Boot**                                                                                  |
+|--------------------------|---------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| **Singleton**            | Ensures only one instance of a class is created throughout the application.    | Spring Beans are singletons by default, managed by the Spring Container.                                |
+| **Factory Method**       | Provides an interface to create objects without specifying their exact classes. | `BeanFactory` and `ApplicationContext` create and manage Spring Beans.                                  |
+| **Prototype**            | Creates a new instance of a bean for every request.                           | Used in Spring for prototype-scoped beans when different instances are required.                        |
+| **Proxy**                | Provides a proxy object to control access to the original object.              | Spring AOP uses proxies to apply cross-cutting concerns like logging and security.                      |
+| **Template Method**      | Defines a skeleton of an algorithm, letting subclasses override steps.         | `JdbcTemplate`, `RestTemplate`, and `JpaTemplate` provide predefined templates for database operations. |
+| **Observer**             | Implements a publisher-subscriber model where observers react to changes.     | Spring’s `ApplicationEvent` and `ApplicationListener` for event-driven programming.                     |
+| **Builder**              | Constructs complex objects step by step.                                      | Used in creating immutable objects, such as `ResponseEntity` in Spring MVC.                             |
+| **Strategy**             | Defines a family of algorithms, letting clients choose one at runtime.        | Spring’s `@Qualifier` and DI allow selecting different bean implementations dynamically.                |
+| **Decorator**            | Adds new functionality to objects dynamically.                                | Used in filters or request/response processing in Spring MVC.                                           |
+| **Front Controller**     | A single handler for all incoming requests.                                   | `DispatcherServlet` in Spring MVC acts as the Front Controller.                                         |
+| **Dependency Injection** | Injects dependencies rather than hardcoding them.                             | Core concept of Spring; achieved via `@Autowired`, constructor injection, or setter injection.          |
+| **MVC (Model-View-Controller)** | Separates application logic, user interface, and data access.            | Spring MVC uses `Controller`, `View`, and `Model` to structure web applications.                        |
+ 
